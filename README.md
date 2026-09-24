@@ -1,10 +1,8 @@
 # Autorent
 
-Autorent on PHP ja MySQL/MariaDB abil tehtud autorendi veebirakendus.
+Autorent on PHP ja MySQL/MariaDB abil tehtud veebirakendus, kus kasutaja saab autosid vaadata, otsida ja broneerida.
 
-Rakenduses saab vaadata autosid, otsida neid margi või mudeli järgi, avada auto detailvaate ja teha broneeringuid. Administraator saab autosid lisada, muuta ja kustutada.
-
-Projekt on tehtud ilma PHP raamistiketa ning andmebaasiga suhtlemiseks kasutatakse `mysqli`.
+Administraator saab autosid lisada, muuta ja kustutada ning admini vaated on kaitstud sisselogimisega.
 
 ## Käivitamine
 
@@ -26,79 +24,108 @@ Rakendus avaneb aadressil:
 http://localhost:8080
 ```
 
-Esimesel käivitamisel võib minna natuke aega, kuni andmebaas ja vajalikud tabelid luuakse.
-
-Andmebaasi SQL fail asub projektis:
+Andmebaasi SQL fail asub siin:
 
 ```text
 db/cars_rent.sql
 ```
 
-## Mida rakendusega teha saab
+## Funktsioonid
 
-### Autode vaatamine
+### Autod
 
-Avalehel ja autode lehel kuvatakse andmebaasis olevad autod kaartidena.
+- autode kuvamine andmebaasist
+- autode otsimine margi ja mudeli järgi
+- lehekülgede kaupa kuvamine
+- eraldi detailvaade igale autole
 
-Autode kohta kuvatakse näiteks:
-
-- mark ja mudel
-- aasta
-- mootor ja kütusetüüp
-- käigukast
-- istekohtade arv
-- rendihind
-- auto staatus
-- pilt
-
-Autode nimekirjas kasutatakse ka lehekülgede kaupa kuvamist.
-
-### Otsing
-
-Autosid saab otsida nii margi kui ka mudeli järgi.
-
-Otsing kasutab GET parameetrit ning kui otsingukast on tühi, kuvatakse kõik autod.
-
-### Auto detailvaade
-
-Igal autol on eraldi detailvaade.
-
-Näiteks:
+Detailvaade avaneb auto ID järgi, näiteks:
 
 ```text
 auto.php?id=5
 ```
 
-Detailvaates kuvatakse valitud auto täpsem info ning sealt saab alustada ka broneeringut.
+### Broneerimine
 
-### Kasutajad ja broneeringud
+Registreeritud kasutaja saab valida autole rendiperioodi.
 
-Kasutaja saab endale konto registreerida ja seejärel auto valitud perioodiks broneerida.
+Broneeringu tegemisel:
 
-Broneeringul valitakse:
+- valitakse algus- ja lõppkuupäev
+- arvutatakse rendi koguhind
+- kontrollitakse, et sama auto broneeringud ei kattuks
 
-- rendi alguskuupäev
-- rendi lõppkuupäev
-- auto
+Kui auto on valitud perioodil juba broneeritud, uut broneeringut ei salvestata.
 
-Koguhind arvutatakse rendipäevade arvu ja auto päevahinna järgi.
+### Admin
 
-Süsteem kontrollib enne salvestamist ka seda, et sama auto broneeringud omavahel ei kattuks.
+Administraator saab:
 
-Kui valitud periood on juba hõivatud, uut broneeringut ei tehta ja kasutajale kuvatakse veateade.
-
-## Admin
-
-Administraatoril on eraldi haldusvaade.
-
-Admin saab:
-
-- vaadata olemasolevaid autosid
-- lisada uusi autosid
-- muuta olemasolevate autode andmeid
+- autosid lisada
+- autode andmeid muuta
 - autosid kustutada
+- vaadata olemasolevat autoparki
 
-Admini lehed on kaitstud sessiooniga ning ilma sisselogimata neile ligi ei pääse.
+Admini lehed kasutavad sessiooni ning ilma sisselogimata neile ligi ei pääse.
+
+## Tehnoloogiad
+
+- PHP 8.x
+- PHP `mysqli`
+- MySQL / MariaDB
+- Bootstrap 5
+- HTML / CSS
+- PHP sessioonid
+- Bcrypt
+- Prepared Statements
+
+## Andmebaas
+
+Rakendus kasutab kolme põhilist tabelit:
+
+```mermaid
+erDiagram
+  USERS ||--o{ RESERVATIONS : teeb
+  CARS ||--o{ RESERVATIONS : on_seotud
+
+  USERS {
+    INT id PK
+    ENUM role
+    VARCHAR first_name
+    VARCHAR last_name
+    VARCHAR email
+    VARCHAR phone
+    VARCHAR password_hash
+    TIMESTAMP created_at
+  }
+
+  CARS {
+    INT id PK
+    VARCHAR brand
+    VARCHAR model
+    INT year
+    VARCHAR registration_number
+    DECIMAL price_per_day
+    VARCHAR fuel_type
+    VARCHAR transmission
+    INT seats
+    TEXT description
+    VARCHAR image
+    ENUM status
+    TIMESTAMP created_at
+  }
+
+  RESERVATIONS {
+    INT id PK
+    INT user_id FK
+    INT car_id FK
+    DATE start_date
+    DATE end_date
+    DECIMAL total_price
+    ENUM status
+    TIMESTAMP created_at
+  }
+```
 
 ## Admini testkonto
 
@@ -106,109 +133,3 @@ Admini lehed on kaitstud sessiooniga ning ilma sisselogimata neile ligi ei pää
 Kasutajanimi: admin
 Parool: Passw0rd
 ```
-
-## Kasutatud tehnoloogiad
-
-- PHP 8.x
-- PHP `mysqli`
-- MySQL / MariaDB
-- Bootstrap 5
-- Bootstrap Icons
-- HTML
-- CSS
-- PHP sessioonid
-- Bcrypt paroolide räsimiseks
-- Prepared Statements SQL päringute jaoks
-- Docker
-
-Bootstrapit kasutatakse põhilise kujunduse ja responsiivsuse jaoks ning eraldi CSS-i on kasutatud võimalikult vähe.
-
-## Andmebaas
-
-Projekt kasutab kolme põhilist tabelit:
-
-### `users`
-
-Hoiab registreeritud kasutajate andmeid.
-
-Olulisemad väljad:
-
-```text
-id
-role
-first_name
-last_name
-email
-phone
-password_hash
-created_at
-```
-
-### `cars`
-
-Hoiab renditavate autode andmeid.
-
-Olulisemad väljad:
-
-```text
-id
-brand
-model
-year
-registration_number
-price_per_day
-fuel_type
-transmission
-seats
-description
-image
-status
-created_at
-```
-
-### `reservations`
-
-Seob kasutaja ja auto broneeringuga.
-
-Olulisemad väljad:
-
-```text
-id
-user_id
-car_id
-start_date
-end_date
-total_price
-status
-created_at
-```
-
-Seosed on põhimõtteliselt järgmised:
-
-```text
-users -> reservations <- cars
-```
-
-Ühel kasutajal võib olla mitu broneeringut ja ühel autol võib olla mitu broneeringut erinevatel aegadel.
-
-## Projekti eesmärk
-
-Projekt on tehtud PHP, MySQL-i ja lihtsa veebirakenduse ülesehituse harjutamiseks.
-
-Selle käigus on tehtud:
-
-- Bootstrapiga veebiliides
-- andmebaasist autode kuvamine
-- otsing
-- auto detailvaade
-- CRUD haldus adminile
-- kasutajate autentimine
-- registreerimine
-- sessioonid
-- broneeringud
-- rendihinna arvutamine
-- kattuvate broneeringute kontroll
-
-## Litsents
-
-Projekt on loodud õppetöö jaoks.
