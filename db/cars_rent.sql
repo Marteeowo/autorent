@@ -55,7 +55,7 @@ CREATE TABLE `clients` (
 --
 
 INSERT INTO `users` (`username`, `password_hash`) VALUES
-('boss', '$2a$12$51YfGnI9J/DrbXVoMgdyoeikD9qAJFsKcuR2fLTBGItYoNpoDCMne'); -- Password: Passw0rd
+('admin', '$2a$12$51YfGnI9J/DrbXVoMgdyoeikD9qAJFsKcuR2fLTBGItYoNpoDCMne'); -- Password: Passw0rd
 
 CREATE TABLE `cars` (
   `id` int(4) NOT NULL,
