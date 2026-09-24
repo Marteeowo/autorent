@@ -1,5 +1,5 @@
 <?php
-  // Detect if we are inside the admin directory to adjust relative paths
+  // Kontrollime admini kausta, et suhtelised rajad õigesti kokku panna.
   $is_admin_dir = (strpos($_SERVER['PHP_SELF'], '/admin/') !== false);
   $root = $is_admin_dir ? '../' : '';
   $admin_root = $is_admin_dir ? '' : 'admin/';
@@ -21,7 +21,7 @@
     </style>
   </head>
   <body>
-    <!-- menüü -->
+    <!-- Siin algab navigeerimismenüü. -->
       <nav class="navbar navbar-expand-lg bg-body-tertiary mb-4">
   <div class="container">
     <a class="navbar-brand nav-link" href="<?php echo $root; ?>index.php">Autorent</a>
@@ -68,4 +68,4 @@
     </div>
   </div>
 </nav>
-    <!-- /menüü -->
+    <!-- Navigeerimismenüü lõpeb siin. -->

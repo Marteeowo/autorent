@@ -1,11 +1,11 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
+-- See SQL-dump pärineb phpMyAdminist.
+-- Algne tööriista versioon oli 5.2.1.
+-- Ekspordi tööriista veebileht oli phpMyAdmin.
 --
--- Host: 127.0.0.1
--- Loomise aeg: Märts 19, 2026 kell 09:05 EL
--- Serveri versioon: 10.4.32-MariaDB
--- PHP versioon: 8.0.30
+-- Andmebaas eksporditi hostist 127.0.0.1.
+-- Eksport valmis 19. märtsil 2026 kell 09:05 EL-i aja järgi.
+-- Server kasutas MariaDB versiooni 10.4.32.
+-- Ekspordi tegemisel oli PHP versioon 8.0.30.
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET FOREIGN_KEY_CHECKS = 0;
@@ -18,15 +18,11 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
---
--- Andmebaas: `car_rent`
---
+-- Järgmised käsud puudutavad andmebaasi `car_rent`.
 
--- --------------------------------------------------------
+-- Järgmine jaotis kirjeldab tabeli struktuuri.
 
---
--- Tabeli struktuur tabelile `users`
---
+-- Tabeli `users` struktuur tuleb siit.
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -36,9 +32,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Tabeli struktuur tabelile `clients`
---
+-- Tabeli `clients` struktuur tuleb järgmisena.
 
 CREATE TABLE `clients` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -50,9 +44,7 @@ CREATE TABLE `clients` (
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Andmete tõmmistamine tabelile `users`
---
+-- Nüüd lisame tabeli `users` algandmed.
 
 INSERT INTO `users` (`username`, `password_hash`) VALUES
 ('admin', '$2a$12$51YfGnI9J/DrbXVoMgdyoeikD9qAJFsKcuR2fLTBGItYoNpoDCMne'); -- Password: Passw0rd
@@ -73,9 +65,7 @@ CREATE TABLE `cars` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Andmete tõmmistamine tabelile `cars`
---
+-- Nüüd lisame tabeli `cars` algandmed.
 
 INSERT INTO `cars` (`id`, `mark`, `model`, `engine`, `fuel`, `price`, `year`, `transmission`, `seats`, `description`, `status`, `image`) VALUES
 (1, 'Audi', 'Q8', 'V8', 'bensiin', 100, 1961, 'manuaal', 2, 'donec semper sapien a libero nam dui', 'hoolduses', '/img/audi.jpg'),
@@ -1084,9 +1074,7 @@ INSERT INTO `cars` (`id`, `mark`, `model`, `engine`, `fuel`, `price`, `year`, `t
 (1001, 'Audi', 'Coupe GT', 'Inline-6', 'electric', 84, 0, 'automaat', 0, '', 'vaba', 'http://dummyimage.com/117x212.png/5fa2dd/ffffff');
 
 
---
--- Tabeli struktuur tabelile `favourites`
---
+-- Järgmisena kirjeldame tabeli `favourites` struktuuri.
 
 CREATE TABLE `favourites` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1099,9 +1087,7 @@ CREATE TABLE `favourites` (
   CONSTRAINT `favourites_ibfk_2` FOREIGN KEY (`car_id`) REFERENCES `cars` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Tabeli struktuur tabelile `rentals`
---
+-- Viimasena kirjeldame tabeli `rentals` struktuuri.
 
 CREATE TABLE `rentals` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

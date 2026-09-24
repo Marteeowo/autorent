@@ -12,12 +12,12 @@ $car_id = intval($_POST['car_id']);
 $start_date = $_POST['start_date'];
 $end_date = $_POST['end_date'];
 
-// Kuupäevade kontroll
+// Kontrollime sisestatud kuupäevad üle.
 if (strtotime($start_date) > strtotime($end_date)) {
     die("Viga: Alguskuupäev ei saa olla hilisem kui lõppkuupäev.");
 }
 
-// 1. Leiame kliendi ID
+// Leiame kõigepealt kliendi ID.
 $stmt = mysqli_prepare($yhendus, "SELECT id FROM clients WHERE username = ?");
 if ($stmt) {
     mysqli_stmt_bind_param($stmt, "s", $username);
@@ -32,8 +32,8 @@ if (!$client_id) {
     die("Kliendi andmeid ei leitud.");
 }
 
-// 2. Kontrollime, kas kliendil on juba aktiivne rent
-// Reegel: Klient ei saa samal perioodil rentida teist autot
+// Vaatame, kas kliendil on juba aktiivne rent.
+// Ühel perioodil saab klient rentida ainult ühe auto.
 $stmt = mysqli_prepare($yhendus, "SELECT id FROM rentals WHERE client_id = ? AND status = 'active' AND start_date <= ? AND end_date >= ?");
 if ($stmt) {
     mysqli_stmt_bind_param($stmt, "iss", $client_id, $end_date, $start_date);
@@ -47,7 +47,7 @@ if ($stmt) {
     die("Andmebaasi viga (rentals kontroll): " . mysqli_error($yhendus));
 }
 
-// 3. Kontrollime, kas auto on veel vaba ja saame ööpäeva hinna
+// Kontrollime auto saadavust ja võtame ööpäeva hinna.
 $stmt = mysqli_prepare($yhendus, "SELECT status, price FROM cars WHERE id = ?");
 if ($stmt) {
     mysqli_stmt_bind_param($stmt, "i", $car_id);
@@ -65,7 +65,7 @@ if ($stmt) {
     die("Andmebaasi viga (auto kontroll): " . mysqli_error($yhendus));
 }
 
-// Kontrollime, kas auto on sellel perioodil juba kellegi teise poolt broneeritud
+// Kontrollime, ega keegi teine pole autot samaks perioodiks broneerinud.
 $stmt_overlap = mysqli_prepare($yhendus, "SELECT id FROM rentals WHERE car_id = ? AND status = 'active' AND start_date <= ? AND end_date >= ?");
 if ($stmt_overlap) {
     mysqli_stmt_bind_param($stmt_overlap, "iss", $car_id, $end_date, $start_date);
@@ -79,22 +79,22 @@ if ($stmt_overlap) {
     die("Andmebaasi viga (saadavuse kontroll): " . mysqli_error($yhendus));
 }
 
-// Arvutame rendiperioodi pikkuse ja koguhinna
+// Arvutame rendi pikkuse ning selle kogumaksumuse.
 $d1 = strtotime($start_date);
 $d2 = strtotime($end_date);
 $diff = $d2 - $d1;
 $days = round($diff / (60 * 60 * 24));
-if ($days <= 0) $days = 1; // Minimaalselt 1 päev renti
+if ($days <= 0) $days = 1; // Väikseim lubatud rendiperiood on üks päev.
 
 $total_price = $days * $daily_price;
 
-// 4. Teostame rentimise (Andmebaasi transaktsioon oleks siin hea, aga teeme lihtsustatult)
+// Salvestame rendi; siin hoiame lahenduse meelega lihtsana.
 $rent_stmt = mysqli_prepare($yhendus, "INSERT INTO rentals (client_id, car_id, start_date, end_date, total_price, status) VALUES (?, ?, ?, ?, ?, 'active')");
 if ($rent_stmt) {
     mysqli_stmt_bind_param($rent_stmt, "iissi", $client_id, $car_id, $start_date, $end_date, $total_price);
 
     if (mysqli_stmt_execute($rent_stmt)) {
-        // Kui rent algab täna, märgime auto staatuse broneerituks
+        // Tänase algusega rent muudab auto kohe broneerituks.
         $today = date('Y-m-d');
         if ($start_date <= $today && $end_date >= $today) {
             $update_stmt = mysqli_prepare($yhendus, "UPDATE cars SET status = 'broneeritud' WHERE id = ?");

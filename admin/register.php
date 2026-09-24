@@ -6,7 +6,7 @@ $msg = "";
 $msg_type = "danger";
 
 if (!empty($_POST)) {
-    // Kasutaja sisend
+    // Loeme kasutaja sisendi kokku.
     $uname = trim($_POST['user']);
     $password = trim($_POST['password']);
     $confirm_password = trim($_POST['confirm_password']);
@@ -18,7 +18,7 @@ if (!empty($_POST)) {
     } elseif ($password !== $confirm_password) {
         $msg = "Paroolid ei kattu!";
     } else {
-        // Kontrollime, kas kasutajanimi on juba olemas kas klientide või adminite tabelis
+        // Kontrollime, ega kasutajanimi pole juba kummaski kasutajatabelis kasutusel.
         $check_stmt = mysqli_prepare($yhendus, "SELECT username FROM clients WHERE username = ? UNION SELECT username FROM users WHERE username = ?");
         if ($check_stmt) {
             mysqli_stmt_bind_param($check_stmt, "ss", $uname, $uname);
@@ -28,17 +28,17 @@ if (!empty($_POST)) {
             if (mysqli_stmt_num_rows($check_stmt) > 0) {
                 $msg = "See kasutajanimi on juba võetud!";
             } else {
-                // Teeme paroolist turvalise räsi
+                // Muudame parooli turvaliseks räsiks.
                 $hashed_password = password_hash($password, PASSWORD_BCRYPT);
                 
-                // Lisame uue kliendi andmebaasi
+                // Salvestame uue kliendi andmebaasi.
                 $insert_stmt = mysqli_prepare($yhendus, "INSERT INTO clients (username, password_hash, bank_name, account_number) VALUES (?, ?, ?, ?)");
                 if ($insert_stmt) {
                     mysqli_stmt_bind_param($insert_stmt, "ssss", $uname, $hashed_password, $bank_name, $account_number);
                     if (mysqli_stmt_execute($insert_stmt)) {
                         $msg = "Konto on loodud! Nüüd saad sisse logida.";
                         $msg_type = "success";
-                        $uname = ""; // Puhastame nime väljalt
+                        $uname = ""; // Teeme nimevälja uuesti tühjaks.
                     } else {
                         $msg = "Viga registreerimisel: " . mysqli_error($yhendus);
                     }

@@ -2,7 +2,7 @@
 <?php include('config.php'); ?>
 <?php include('header.php'); ?>
 
-<!-- sisu -->
+<!-- Üksiku auto lehe põhisisu. -->
 <div class="container">
     <div class="row">
 
@@ -13,7 +13,7 @@
         mysqli_stmt_execute($stmt);
         $valjund = mysqli_stmt_get_result($stmt);
         $rida = mysqli_fetch_assoc($valjund);
-        // print_r($rida);
+        // Kontrollimiseks saab siia vajadusel rea välja printida.
         ?>
         <div class="col">
             <h1><?php echo $rida["mark"]; ?><?php echo $rida["model"]; ?></h1>
@@ -64,7 +64,7 @@
     </div>
     
 </div>
-<!-- /sisu -->
+<!-- Üksiku auto leht lõpeb siin. -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     
   </body>
@@ -89,7 +89,7 @@
 
             const timeDiff = endDate.getTime() - startDate.getTime();
             let days = Math.ceil(timeDiff / (1000 * 3600 * 24));
-            if (days === 0) days = 1; // Minimum 1 day rental
+            if (days === 0) days = 1; // Väikseim rendiperiood on üks päev.
 
             const totalPrice = days * dailyPrice;
             totalPriceDisplay.textContent = totalPrice.toFixed(2);

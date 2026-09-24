@@ -1,7 +1,7 @@
 <?php
-// generate_hash.php
+// See fail valmistab testparoolile uue räsi.
 
-$password_to_hash = 'Passw0rd'; // Change this to the password you want to hash
+$password_to_hash = 'Passw0rd'; // Muuda siin parooli, millele soovid räsi luua.
 $hashed_password = password_hash($password_to_hash, PASSWORD_BCRYPT);
 
 echo "Original Password: " . htmlspecialchars($password_to_hash) . "<br>";

@@ -30,7 +30,7 @@
     }
 ?>
 
-<!-- sisu -->
+<!-- Uue auto vormi põhisisu. -->
 <div class="container">
     <h2>Auto lisamine</h2>
     <form action="lisa.php" method="get">
@@ -65,7 +65,7 @@
    
 
 </div>
-<!-- /sisu -->
+<!-- Uue auto vormi sisu lõpeb siin. -->
 
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>

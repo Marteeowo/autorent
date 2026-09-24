@@ -1,11 +1,11 @@
 <?php
-    // Kasutame Dockeri keskkonnamuutujaid või vaikeväärtusi
+    // Loeme Dockeri seaded või kasutame nende puudumisel vaikeväärtusi.
     $db_server = getenv('DB_HOST') ?: 'db';
     $db_andmebaas = getenv('DB_NAME') ?: 'car_rent';
     $db_kasutaja = getenv('DB_USER') ?: 'admin';
     $db_salasona = getenv('DB_PASS') ?: 'Passw0rd';
 
-    // Ühenduse loomine koos korduskatsetega (kuni 5 korda)
+    // Proovime andmebaasiga ühendust luua kuni viis korda.
     $yhendus = false;
     $attempts = 0;
     
@@ -14,10 +14,10 @@
         if ($yhendus) break;
         
         $attempts++;
-        sleep(2); // Ootame 2 sekundit enne uut katset
+        sleep(2); // Anname enne uut katset kaks sekundit aega.
     }
 
-    // Ühenduse kontroll
+    // Kontrollime, kas ühendus sai lõpuks loodud.
     if (!$yhendus) {
         die('Viga: Andmebaasiga ei saanud ühendust. Kontrolli, kas DB konteiner töötab. ' . mysqli_connect_error());
     }

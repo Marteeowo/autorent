@@ -9,17 +9,17 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'admin') {
 <?php include('../config.php'); ?>
 <?php include('../header.php'); ?>
 
-<!-- sisu -->
+<!-- Admini lehe põhisisu algab siit. -->
 <div class="container">
     <h2>Admini ala</h2>
 <?php
-    // sõnumi kuvamine
+    // Kuvame kasutajale süsteemi teate.
     if(isset($_GET['msg'])){
       echo '<div class="alert alert-success" role="alert"> Kõik on hästi! </div>';
     }
 
 
-  //autode kuvamine
+    // Näitame autode nimekirja.
     $limit = 8;
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
     if ($page < 1) $page = 1;
@@ -30,13 +30,13 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'admin') {
         $otsing = "%" . $_GET["otsi"] . "%";
         $otsi_param = "&otsi=" . urlencode($_GET["otsi"]);
 
-        // Andmete päring
+        // Küsime lehel näidatavad andmed.
         $stmt = mysqli_prepare($yhendus, "SELECT * FROM cars WHERE mark LIKE ? LIMIT ? OFFSET ?");
         mysqli_stmt_bind_param($stmt, "sii", $otsing, $limit, $offset);
         mysqli_stmt_execute($stmt);
         $valjund = mysqli_stmt_get_result($stmt);
 
-        // Koguarvu päring lehekülgede arvutamiseks
+        // Leiame koguarvu lehekülgede arvutamiseks.
         $count_stmt = mysqli_prepare($yhendus, "SELECT COUNT(*) as total FROM cars WHERE mark LIKE ?");
         mysqli_stmt_bind_param($count_stmt, "s", $otsing);
         mysqli_stmt_execute($count_stmt);
@@ -51,11 +51,11 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'admin') {
     }
     $total_pages = ceil($total_rows / $limit);
 
-    // Aktiivsete rentimiste päring (täna on perioodi sees)
+    // Toome rendid, mille periood hõlmab tänast päeva.
     $active_rentals_paring = "SELECT r.*, c.mark, c.model, cl.username FROM rentals r JOIN cars c ON r.car_id = c.id JOIN clients cl ON r.client_id = cl.id WHERE r.status = 'active' AND CURRENT_DATE BETWEEN r.start_date AND r.end_date ORDER BY r.start_date ASC";
     $active_rentals_valjund = mysqli_query($yhendus, $active_rentals_paring);
 
-    // Tulevaste broneeringute päring (algus on tulevikus)
+    // Toome broneeringud, mille algus on alles ees.
     $future_bookings_paring = "SELECT r.*, c.mark, c.model, cl.username FROM rentals r JOIN cars c ON r.car_id = c.id JOIN clients cl ON r.client_id = cl.id WHERE r.status = 'active' AND r.start_date > CURRENT_DATE ORDER BY r.start_date ASC";
     $future_bookings_valjund = mysqli_query($yhendus, $future_bookings_paring);
 
@@ -80,8 +80,8 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'admin') {
   </thead>
   <tbody>
     <?php
-        while($rida = mysqli_fetch_assoc($valjund)){       //sikutan vastuse alla
-            // var_dump($rida);                       //kuvan testvastuse
+        while($rida = mysqli_fetch_assoc($valjund)){       // Loeme vastuse ridu ükshaaval.
+            // var_dump($rida);                       // Vajadusel saab testvastuse välja võtta.
     ?>
     <tr>
       <th scope="row"><?php echo $rida["id"]; ?></th>
@@ -99,7 +99,7 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'admin') {
     </div>
 </div>
 
-    <!-- paginatsiooni nupud -->
+    <!-- Admini lehekülgede vahetamise nupud. -->
     <div class="d-flex justify-content-center mt-4 mb-5">
         <nav aria-label="Page navigation">
             <ul class="pagination">
@@ -114,7 +114,7 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'admin') {
         </nav>
     </div>
 
-    <!-- Aktiivsed rendid -->
+    <!-- Praegu aktiivsed rendid. -->
     <div class="card mb-5 border-success">
         <div class="card-header bg-success text-white">
             <h4 class="mb-0">Hetkel väljas (Aktiivsed rendid)</h4>
@@ -143,7 +143,7 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'admin') {
         </div>
     </div>
 
-    <!-- Tulevased broneeringud -->
+    <!-- Tulevikku jäävad broneeringud. -->
     <div class="card mb-5 border-info">
         <div class="card-header bg-info text-dark">
             <h4 class="mb-0">Tulevased broneeringud</h4>
@@ -176,7 +176,7 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'admin') {
         </div>
     </div>
 
-<!-- /sisu -->
+<!-- Admini lehe põhisisu lõpeb siin. -->
 
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>

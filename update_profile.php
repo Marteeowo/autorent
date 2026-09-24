@@ -11,7 +11,7 @@ $username = $_SESSION['tuvastamine'];
 $client_id = null;
 $stored_password_hash = null;
 
-// Get client_id and current password hash
+// Võtame kliendi ID ja praeguse parooli räsi.
 $stmt = mysqli_prepare($yhendus, "SELECT id, password_hash FROM clients WHERE username = ?");
 if ($stmt) {
     mysqli_stmt_bind_param($stmt, "s", $username);
@@ -93,7 +93,7 @@ if (isset($_POST['change_password'])) {
     }
 }
 
-// If no specific action was taken, redirect to profile page
+// Kui eraldi tegevust ei olnud, suuname tagasi profiili lehele.
 header("Location: client_profile.php");
 exit();
 ?>

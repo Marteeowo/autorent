@@ -12,15 +12,15 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'client') {
     <h2 class="mb-4">Minu lemmikud</h2>
     <div class="row row-cols-1 row-cols-md-4 g-4">
         <?php
-        // Paginatsiooni seaded
-        $limit = 8; // Mitu autot kuvatakse lehel
+        // Paneme lehekülje suuruse paika.
+        $limit = 8; // Ühel lehel näitame kaheksat autot.
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         if ($page < 1) $page = 1;
         $offset = ($page - 1) * $limit;
 
         $username = $_SESSION['tuvastamine'];
         
-        // Koguarvu päring lehekülgede arvutamiseks
+        // Leiame koguarvu, et lehekülgede arvutus klapiks.
         $count_stmt = mysqli_prepare($yhendus, "SELECT COUNT(*) as total FROM favourites f JOIN clients c ON f.client_id = c.id WHERE c.username = ?");
         if ($count_stmt) {
             mysqli_stmt_bind_param($count_stmt, "s", $username);
@@ -33,7 +33,7 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'client') {
         }
         $total_pages = ceil($total_rows / $limit);
 
-        // Andmete päring paginatsiooniga
+        // Toome lemmikud välja lehekülgede kaupa.
         $stmt = mysqli_prepare($yhendus, "SELECT cars.* FROM cars JOIN favourites ON cars.id = favourites.car_id JOIN clients ON favourites.client_id = clients.id WHERE clients.username = ? LIMIT ? OFFSET ?");
         $valjund = []; // Initialize $valjund as an empty array
         if ($stmt) {
@@ -48,9 +48,9 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'client') {
                 exit();
             }
         } else {
-            // Handle error if mysqli_prepare fails for the main query
+            // Kui põhipäringu ettevalmistus ebaõnnestub, tegeleme veaga.
             echo '<div class="col-12"><div class="alert alert-danger">Andmebaasi päringu viga: ' . htmlspecialchars(mysqli_error($yhendus)) . '</div></div>';
-            // Ensure $valjund is an iterable object for the while loop
+            // Hoiame väljundi sellisena, et while-tsükkel saaks seda lugeda.
             $valjund = mysqli_query($yhendus, "SELECT * FROM cars WHERE 0"); // Return empty result set
         }
         
@@ -63,7 +63,7 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'client') {
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start">
                             <h5 class="card-title"><?php echo $rida["mark"]; ?> <?php echo $rida["model"]; ?></h5>
-                            <!-- In this page, the icon is always bi-heart-fill. Clicking it triggers the removal toggle. -->
+                            <!-- Sellel lehel näitab täidetud süda, et klõps eemaldab lemmiku. -->
                             <a href="add_to_favourites.php?car_id=<?= $rida['id']; ?>&redirect=favourites" class="text-danger fs-4">
                                 <i class="bi bi-heart-fill"></i>
                             </a>
@@ -82,7 +82,7 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'client') {
         ?>
     </div>
 
-    <!-- paginatsiooni nupud -->
+    <!-- Siin on lehekülgede vahel liikumise nupud. -->
     <div class="d-flex justify-content-center mt-4 mb-5">
         <nav aria-label="Page navigation">
             <ul class="pagination">

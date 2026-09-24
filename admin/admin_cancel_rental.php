@@ -9,7 +9,7 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'admin' || empty($_GET['r
 
 $rental_id = intval($_GET['rental_id']);
 
-// Hankime broneeringu andmed ja kontrollime, et see oleks aktiivne
+// Toome broneeringu andmed ja kontrollime selle aktiivsust.
 $stmt = mysqli_prepare($yhendus, "SELECT car_id, start_date, end_date FROM rentals WHERE id = ? AND status = 'active'");
 mysqli_stmt_bind_param($stmt, "i", $rental_id);
 mysqli_stmt_execute($stmt);
@@ -21,17 +21,17 @@ if ($rental) {
     $car_id = $rental['car_id'];
     $today = date('Y-m-d');
     
-    // Alustame transaktsiooni andmete terviklikkuse tagamiseks
+    // Hoiame seotud muudatused ühe tehinguna.
     mysqli_begin_transaction($yhendus);
     
     try {
-        // 1. Märgime broneeringu tühistatuks
+        // Märgime broneeringu tühistatuks.
         $upd_stmt = mysqli_prepare($yhendus, "UPDATE rentals SET status = 'cancelled' WHERE id = ?");
         mysqli_stmt_bind_param($upd_stmt, "i", $rental_id);
         mysqli_stmt_execute($upd_stmt);
         mysqli_stmt_close($upd_stmt);
 
-        // 2. Kui broneering pidi algama täna või varem, märgime ka auto vabaks
+        // Tänase või varasema algusaja korral teeme ka auto vabaks.
         if ($rental['start_date'] <= $today && $rental['end_date'] >= $today) {
             $car_upd = mysqli_prepare($yhendus, "UPDATE cars SET status = 'vaba' WHERE id = ?");
             mysqli_stmt_bind_param($car_upd, "i", $car_id);

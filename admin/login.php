@@ -5,11 +5,11 @@ include('../config.php');
 $msg = "";
 if (!empty($_POST)) {
 
-    // kasutaja vormist
+    // Alustame kasutaja sisselogimise vormiga.
     $uname = trim($_POST['user']);
     $password = trim($_POST['password']);
 
-    // 1. Kontrollime adminite tabelist
+    // Kontrollime kõigepealt adminite tabelit.
     $stmt = mysqli_prepare($yhendus, "SELECT username, password_hash FROM users WHERE username = ?");
      if ($stmt) {
         mysqli_stmt_bind_param($stmt, "s", $uname);
@@ -26,7 +26,7 @@ if (!empty($_POST)) {
         }
     }
 
-    // 2. Kui admini ei leitud, kontrollime klientide tabelist
+    // Admini puudumisel vaatame ka klientide tabelit.
     $stmt = mysqli_prepare($yhendus, "SELECT username, password_hash FROM clients WHERE username = ?");
     if ($stmt) {
         mysqli_stmt_bind_param($stmt, "s", $uname);

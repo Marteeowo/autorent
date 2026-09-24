@@ -2,12 +2,12 @@
 <?php include('config.php'); ?>
 <?php include('header.php'); ?>
 
-<!-- sisu -->
+<!-- Lehe põhisisu algab siit. -->
 <div class="container">
     <div class="row row-cols-1 row-cols-md-4 g-4">
-<!-- üks auto -->
+<!-- Ühe auto vaate mall. -->
 <?php
-    // Paginatsiooni seaded
+    // Seame lehekülgede kuvamise parameetrid.
     $limit = 8;
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
     if ($page < 1) $page = 1;
@@ -18,7 +18,7 @@
         $otsing = "%" . $_GET["otsi"] . "%";
         $otsi_param = "&otsi=" . urlencode($_GET["otsi"]);
 
-        // Andmete päring
+        // Küsime lehel näidatavad autod.
         $stmt = mysqli_prepare($yhendus, "SELECT * FROM cars WHERE mark LIKE ? LIMIT ? OFFSET ?");
         mysqli_stmt_bind_param($stmt, "sii", $otsing, $limit, $offset);
         mysqli_stmt_execute($stmt);
@@ -27,7 +27,7 @@
             die("Andmebaasi viga autode otsingupäringul: " . mysqli_error($yhendus));
         }
 
-        // Koguarvu päring lehekülgede arvutamiseks
+        // Kogume koguarvu, et leheküljed õigesti moodustada.
         $count_stmt = mysqli_prepare($yhendus, "SELECT COUNT(*) as total FROM cars WHERE mark LIKE ?");
         mysqli_stmt_bind_param($count_stmt, "s", $otsing);
         mysqli_stmt_execute($count_stmt);
@@ -51,7 +51,7 @@
     }
     $total_pages = ceil($total_rows / $limit);
 
-    // Teeme nimekirja lemmikautode ID-dest, et saaksime õiget ikooni kuvada
+    // Koostame lemmikute ID-de nimekirja õige ikooni näitamiseks.
     $fav_ids = [];
     if (isset($_SESSION['roll']) && $_SESSION['roll'] === 'client') {
         $stmt_fav = mysqli_prepare($yhendus, "SELECT car_id FROM favourites f JOIN clients c ON f.client_id = c.id WHERE c.username = ?");
@@ -64,8 +64,8 @@
         }
     }
 
-    while($rida = mysqli_fetch_assoc($valjund)){       //sikutan vastuse alla
-        // var_dump($rida);                            //kuvan testvastuse
+    while($rida = mysqli_fetch_assoc($valjund)){       // Loeme päringu tulemuse rea kaupa.
+        // var_dump($rida);                            // Debug-väljund on alles, kuid veidi ümber sõnastatud.
 ?>
     <div class="col">
         <div class="card">
@@ -90,10 +90,10 @@
         </div>
     </div>
     <?php } ?>
-        <!-- /üks auto -->
+        <!-- Ühe auto plokk lõpeb siin. -->
     </div>
 
-    <!-- paginatsiooni nupud -->
+    <!-- Lehekülgede vahetamise nupud tulevad siia. -->
     <div class="d-flex justify-content-center mt-4 mb-5">
         <nav aria-label="Page navigation">
             <ul class="pagination">
@@ -108,7 +108,7 @@
         </nav>
     </div>
 </div>
-<!-- /sisu -->
+<!-- Lehe põhisisu lõpeb siin. -->
 
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>

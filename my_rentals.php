@@ -29,7 +29,7 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'client') {
             </thead>
             <tbody>
                 <?php
-                // Paginatsiooni seaded
+                // Määrame rendilehtede kuvamise seaded.
                 $limit = 10;
                 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
                 if ($page < 1) $page = 1;
@@ -37,7 +37,7 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'client') {
 
                 $username = $_SESSION['tuvastamine'];
 
-                // Koguarvu päring lehekülgede arvutamiseks
+                // Leiame koguarvu, et lehekülgi õigesti arvutada.
                 $count_stmt = mysqli_prepare($yhendus, "SELECT COUNT(*) as total FROM rentals r JOIN clients c ON r.client_id = c.id WHERE c.username = ?");
                 mysqli_stmt_bind_param($count_stmt, "s", $username);
                 mysqli_stmt_execute($count_stmt);
@@ -47,16 +47,16 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'client') {
                 
                 $total_pages = ceil($total_rows / $limit);
 
-                // Andmete päring (liidame autod ja kliendid)
+                // Toome rendid välja koos autode ja klientide infoga.
                 $stmt = mysqli_prepare($yhendus, "SELECT cars.mark, cars.model, r.start_date, r.end_date, r.total_price, r.id as rental_id, r.car_id, r.status as rental_status FROM rentals r JOIN cars ON r.car_id = cars.id JOIN clients c ON r.client_id = c.id WHERE c.username = ? ORDER BY r.end_date DESC LIMIT ? OFFSET ?");
-                $valjund = false; // Initialize to false
+                $valjund = false; // Alustame tühja tulemusega.
                 if ($stmt) {
                     mysqli_stmt_bind_param($stmt, "sii", $username, $limit, $offset);
                     mysqli_stmt_execute($stmt);
                     $valjund = mysqli_stmt_get_result($stmt);
                 } else {
                     echo '<tr><td colspan="5" class="text-center py-4 text-danger">Andmebaasi päringu viga: ' . htmlspecialchars(mysqli_error($yhendus)) . '</td></tr>';
-                    $valjund = mysqli_query($yhendus, "SELECT * FROM cars WHERE 0"); // Return empty result set to prevent further errors
+                    $valjund = mysqli_query($yhendus, "SELECT * FROM cars WHERE 0"); // Tagame veavaba tühja tulemuse.
                 }
 
                 if (mysqli_num_rows($valjund) == 0) {
@@ -110,7 +110,7 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'client') {
         </table>
     </div>
 
-    <!-- paginatsiooni nupud -->
+    <!-- Rendi lehekülgede vahetamise nupud. -->
     <div class="d-flex justify-content-center mt-4 mb-5">
         <nav aria-label="Page navigation">
             <ul class="pagination">

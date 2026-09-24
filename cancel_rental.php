@@ -2,7 +2,7 @@
 session_start();
 include('config.php');
 
-// Ainult sisselogitud kliendid saavad seda kasutada
+// Seda toimingut saavad teha ainult sisselogitud kliendid.
 if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'client' || !isset($_GET['rental_id']) || !isset($_GET['car_id'])) {
     header("Location: my_rentals.php");
     exit();
@@ -12,7 +12,7 @@ $username = $_SESSION['tuvastamine'];
 $rental_id = intval($_GET['rental_id']);
 $car_id = intval($_GET['car_id']);
 
-// 1. Leiame kliendi ID
+// Leiame kõigepealt kliendi ID.
 $stmt = mysqli_prepare($yhendus, "SELECT id FROM clients WHERE username = ?");
 if ($stmt) {
     mysqli_stmt_bind_param($stmt, "s", $username);
@@ -28,7 +28,7 @@ if (!$client_id) {
     exit();
 }
 
-// 2. Kontrollime, kas rent kuulub sellele kliendile ja on aktiivne
+// Kontrollime, et rent kuuluks sellele kliendile ja oleks aktiivne.
 $stmt = mysqli_prepare($yhendus, "SELECT id FROM rentals WHERE id = ? AND client_id = ? AND end_date >= CURRENT_DATE AND status = 'active'");
 if ($stmt) {
     mysqli_stmt_bind_param($stmt, "ii", $rental_id, $client_id);
@@ -44,8 +44,8 @@ if ($stmt) {
     exit();
 }
 
-// 3. Tühistame rendi ja muudame auto staatuse vabaks
-$yhendus->begin_transaction(); // Start transaction for atomicity
+// Tühistame rendi ning märgime auto uuesti vabaks.
+$yhendus->begin_transaction(); // Alustame tehingut, et muudatused püsiksid koos.
 try {
     $cancel_rental_stmt = mysqli_prepare($yhendus, "UPDATE rentals SET status = 'cancelled' WHERE id = ? AND client_id = ?");
     mysqli_stmt_bind_param($cancel_rental_stmt, "ii", $rental_id, $client_id);
@@ -55,11 +55,11 @@ try {
     mysqli_stmt_bind_param($update_car_stmt, "i", $car_id);
     mysqli_stmt_execute($update_car_stmt);
 
-    $yhendus->commit(); // Commit transaction
+    $yhendus->commit(); // Kinnitame tehingu pärast edukat lõpetamist.
     header("Location: my_rentals.php?success=rental_cancelled");
     exit();
 } catch (mysqli_sql_exception $exception) {
-    $yhendus->rollback(); // Rollback on error
+    $yhendus->rollback(); // Vea korral võtame muudatused tagasi.
     header("Location: my_rentals.php?error=cancel_failed");
     exit();
 }

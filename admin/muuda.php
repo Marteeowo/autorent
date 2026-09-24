@@ -2,35 +2,8 @@
 <?php include('../header.php'); ?>
 
 <?php
-    // if(!empty($_GET)){
-    //    $mark = $_GET['mark'];
-    //    $model = $_GET['model'];
-    //    $engine = $_GET['engine'];
-    //    $fuel = $_GET['fuel'];
-    //    $price = $_GET['price'];
-
-    //    $year = $_GET['year'];
-    //    $transmission = $_GET['transmission'];
-    //    $seats = $_GET['seats'];
-    //    $description = $_GET['description'];
-    //    $status = $_GET['status'];
-
-
-    //    $sql = "INSERT INTO cars (mark, model, engine, fuel, price, year, transmission, seats, description, status) VALUES ('".$mark."', '".$model."', '".$engine."', '".$fuel."', '".$price."', '".$year."', '".$transmission."', '".$seats."', '".$description."', '".$status."')";
-
-    //    $valjund = mysqli_query($yhendus, $sql); 
-    //    $tulemus = mysqli_affected_rows($yhendus);
-    //     if ($tulemus == 1) {
-    //         // header("Location: index.php?msg=lisatud");
-    //     } else {
-    //         echo "Kirjet ei lisatud";
-    //     }
-
-
-    // }
-   
-
-    // }
+    // Vana GET-põhine lisamisproov on alles ainult ajaloolise näitena.
+    // Päris vorm kasutab uuemat lahendust: sama kodutöö mõte, veidi teine teostus.
 
 
     if(isset($_GET["editid"])){
@@ -38,7 +11,7 @@
         $paring = "SELECT * FROM cars WHERE id=$id";
         $valjund = mysqli_query($yhendus, $paring);
         $rida = mysqli_fetch_assoc($valjund);
-            // print_r($rida['mark']);
+            // Vajadusel saab auto margi kontrolliks välja printida.
     }
 
       if(isset($_GET["updateid"])){
@@ -57,7 +30,7 @@
 
         $paring = "UPDATE cars SET mark = '".$mark."', model = '".$model."', engine = '".$engine."', fuel = '".$fuel."', price = '".$price."', year = '".$year."', transmission = '".$transmission."', seats = '".$seats."', description = '".$description."', status = '".$status."' WHERE cars.id = ".$id."";
 
-        // print_r($paring);
+        // Vajadusel saab päringu tulemuse kontrolliks välja printida.
 
         $valjund = mysqli_query($yhendus, $paring);
         $tulemus = mysqli_affected_rows($yhendus);
@@ -74,7 +47,7 @@
 
 ?>
 
-<!-- sisu -->
+<!-- Auto muutmise vormi põhisisu. -->
 <div class="container">
     <h2>Auto lisamine</h2>
     <form action="muuda.php" method="get">
@@ -111,7 +84,7 @@
    
 
 </div>
-<!-- /sisu -->
+<!-- Auto muutmise vormi sisu lõpeb siin. -->
 
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>

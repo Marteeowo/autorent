@@ -12,7 +12,7 @@ if (!isset($_SESSION['roll']) || $_SESSION['roll'] !== 'client') {
     <h2 class="mb-4">Minu profiil</h2>
 
     <?php
-    // Display success/error messages
+    // Kuvame kasutajale õnnestumise või vea teate.
     if (isset($_GET['success'])) {
         $message = '';
         if ($_GET['success'] === 'password_updated') {
