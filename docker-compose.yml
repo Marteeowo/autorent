@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  db:
+    image: mariadb:10.4
+    restart: always
+    environment:
+      MYSQL_DATABASE: car_rent
+      MYSQL_ROOT_PASSWORD: Passw0rd
+      MYSQL_USER: boss
+      MYSQL_PASSWORD: Passw0rd
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "boss", "-pPassw0rd"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./db/cars_rent.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/mysql
+
+  app:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DB_HOST=db
+      - DB_NAME=car_rent
+      - DB_USER=boss
+      - DB_PASS=Passw0rd
+
+volumes:
+  db_data:
